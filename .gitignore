@@ -1,0 +1,6 @@
+log
+data
+site/**
+!site/wp-content/
+!site/wp-content/backups/
+!site/wp-content/backups/**

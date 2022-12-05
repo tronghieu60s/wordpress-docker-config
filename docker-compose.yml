@@ -1,0 +1,66 @@
+version: "3.7"
+
+services:
+  nginx:
+    container_name: nginx
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./site:/var/www/html
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+      - ./log/nginx:/var/log/nginx
+    networks:
+      - common
+    restart: always
+
+  db:
+    container_name: db
+    image: mysql:5.7
+    volumes:
+      - ./data/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+    networks:
+      - common
+    restart: always
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    ports:
+      - 8081:80
+    environment:
+      - PMA_HOST=db
+      - PMA_ARBITRARY=1
+    networks:
+      - common
+    restart: always
+
+  site:
+    container_name: site
+    image: wordpress:fpm
+    volumes:
+      - ./site:/var/www/html
+      - ./config/php.ini:/usr/local/etc/php/conf.d/php.ini
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+    networks:
+      - common
+    restart: always
+
+volumes:
+  db:
+  phpmyadmin:
+  site:
+
+networks:
+  common:
+    driver: bridge
