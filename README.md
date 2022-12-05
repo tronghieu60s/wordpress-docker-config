@@ -1,5 +1,5 @@
 # Wordpress Docker Config
-Cấu Hình Nginx + Wordpress + Docker
+Config Nginx + Wordpress + Docker
 
 - Nginx
 - Mysql
